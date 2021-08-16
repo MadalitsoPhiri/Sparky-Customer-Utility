@@ -1,19 +1,60 @@
-var express = require('express');  
-var app = express(); 
+const express = require('express');  
+const app = express();
+require('dotenv').config() 
 const redis = require('redis');
 const redisClient = redis.createClient(); 
-var server = require('http').createServer(app);  
+const cors = require('cors')
+const helmet = require('helmet')
+const morgan = require('morgan')
+const mongoose = require('mongoose');
+const userRoute = require('./routes/users')
+const authRoute = require('./routes/auth')
+
+
+
+
+
+const PORT = process.env.PORT || 5000  
+
+const agents = []
+const clients = []
+
+app.use(cors())
+app.use(express.json())
+app.use(helmet())
+app.use(morgan("common")) 
+
+
+app.get("/",(req,res)=>{
+res.json({spark:"hi"})
+})
+
+app.use("/api/user",userRoute)
+app.use("/api/auth",authRoute)
+
+
+const uri = process.env.ATLAS_URI;
+mongoose.connect(uri,{useNewUrlParser:true, useCreateIndex:true,  useUnifiedTopology: true});
+const connection = mongoose.connection
+connection.once('open',()=>{
+  console.log("MongoDb connected!")
+})
+var server = app.listen(PORT,()=>{
+  console.log('express server runing')
+});
+
+//redis server listening
+redisClient.on('connect', function() {
+  console.log('redis server Connected!');
+});
+
+
 var io = require('socket.io')(server, {
-    cors: {
-      origin: '*',
-    }
-  });
+  cors: {
+    origin: '*',//change this in production
+  }
+});
 
-var agents = []
-var clients = []
-
-
-server.listen(4200);
 
 //an event for all socket connections from clients
 io.on('connection',client=>{
@@ -55,6 +96,5 @@ io.on('connection',client=>{
 
 
 
-redisClient.on('connect', function() {
-    console.log('redis server Connected!');
-  });
+
+
