@@ -3,6 +3,9 @@ module.exports = {
   darkMode: false, // or 'media' or 'class'
   theme: {
     extend: {
+      outline: {
+        yellow: '2px solid #F59E0B',
+      },
       colors:{
         black:{
           nav:"#36393f"

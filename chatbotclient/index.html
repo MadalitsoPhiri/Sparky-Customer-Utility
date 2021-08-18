@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+      .no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}  
+.fade-out{
+    transform: translateY(1000px);
+    transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+transition-duration: 150ms;
+}
+.dialog-fade{
+    transform: translateY(1000px);
+    transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+transition-duration: 150ms;
+}
+.chat-bubble{
+    max-width: 70%;
+}
+    </style>
+  <script src="https://cdn.socket.io/3.1.3/socket.io.min.js" integrity="sha384-cPwlPLvBTa3sKAgddT6krw0cJat7egBga3DJepJyrLl4Q9/5WLra3rrnMcyTyOnh" crossorigin="anonymous"></script>
+</head>
+<body class="container">
+
+    <div id="chatInterface" class="dialog-fade transition duration-500 ease-in-out flex flex-col w-56 bg-white shadow-md  rounded-xl fixed right-5 top-10 bottom-10">
+     <div class=" flex flex-row justify-between bg-yellow-500 w-full rounded-t-xl p-4">
+        <div class="flex flex-row gap-2"> <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg> 
+            <p class="text-white font-bold">Sparky</p></div>
+       
+         <svg id="close" class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+     </div>
+     <div class="flex-1 p-4 flex flex-col gap-2 overflow-auto">
+       <div id="messageContainer" class="flex flex-col flex-1 rounded-lg gap-4 overflow-y-scroll no-scrollbar ">
+         <!-- <p class=" chat-bubble self-end p-2  bg-yellow-500 rounded-tl-xl rounded-br-xl rounded-bl-xl text-white break-words text-xs">Hi </p>
+         <p class=" chat-bubble self-start p-2  bg-gray-200 rounded-bl-xl rounded-tr-xl  rounded-br-xl text-black break-words text-xs" ">hi</p>
+         <p class=" chat-bubble self-end p-2  bg-yellow-500 rounded-tl-xl rounded-br-xl rounded-bl-xl text-white break-words text-xs">Hi thereldfkdmfkdmfmkdfmkfmkfmkfkfmkfkdmfkfkdmfkfmkdmfkmfkfmkfmdkfmdkfmdkfmkdmfkdmfkdmfkdmfkdmfkdmf</p>
+         <p class="chat-bubble self-end p-2  bg-yellow-500 rounded-tl-xl rounded-br-xl rounded-bl-xl text-white break-words text-xs">Hi thereldfkdmfkdmfmkdfmkfmkfmkfkfmkfkdmfkfkdmfkfmkdmfkmfkfmkfmdkfmdkfmdkfmkdmfkdmfkdmfkdmfkdmfkdmf</p> -->
+       </div>
+       <div class="flex flex-col gap-2 divide-y-2">
+
+        <div class="flex flex-row rounded-lg gap-1">
+            <input id="message" placeholder="type message here" class="flex-1 p-2 rounded-lg outline-none"/>
+            <button id="sendButton" class="flex flex-row justify-center items-center rounded-full h-full p-2 bg-yellow-500">
+             <svg class="w-6 h-6 transform rotate-90 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+            </button>
+        </div>
+        <div class="flex felx-row justify-center items-center">
+         <p class="text-xs">powered by <span class="text-yellow-500">sparky</span></p>
+     </div>
+       </div>
+      
+     </div>
+   
+    </div>
+
+
+    <div id="chatbotButton" class="transition duration-500 ease-in-out shadow-lg flex flex-row items-center justify-center rounded-full bg-yellow-500 w-14 h-14 absolute right-5 bottom-5">
+        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+    </div>
+    <script src="index.js"></script>
+</body>
+</html>

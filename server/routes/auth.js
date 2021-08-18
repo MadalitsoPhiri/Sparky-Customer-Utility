@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const UserModel = require('../models/user.model')
 const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
 
 //Register
 
@@ -21,6 +22,15 @@ router.post("/register", async(req,res)=>{
         await user.save()
         res.status(200).json(user)
     }catch(err){
+        if (err) {
+            if (err.name === 'MongoError' && err.code === 11000) {
+              // Duplicate username
+              return res.status(422).json({ success: false, message: 'User already exist!' });
+            }
+      
+           
+          }
+      
         res.status(500).json(err)
        
     }
@@ -32,12 +42,15 @@ router.post("/register", async(req,res)=>{
 router.post('/login',async(req,res)=>{
 
     try{
+        console.log(req.body)
         const user = await UserModel.findOne({email:req.body.email})
        
         if(user){
             const validPassword = await bcrypt.compare(req.body.password, user.password)
             if(validPassword){
-                res.status(200).json({message:"login successful"})
+                console.log(process.env.TOKEN_SECRET)
+                const token = jwt.sign({email:user.email,user:user.password},process.env.TOKEN_SECRET,{expiresIn:"30m"})
+                res.status(200).json({message:"login successful",payload:{email:user.email,token:token}})
             }else{
                 res.status(400).json({message:"wrong password"})
             } 
