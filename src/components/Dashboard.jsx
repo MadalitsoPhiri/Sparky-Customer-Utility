@@ -36,7 +36,7 @@ function Dashboard() {
 
   return (
     <Router>
-    <div className="flex flex-row w-screen h-screen overflow-hidden">
+    <div className="flex flex-row w-screen h-screen overflow-x-hidden">
       {/* navbar */}
      <div className="flex flex-col h-full py-2 bg-black-nav justify-between">
       
@@ -135,7 +135,7 @@ function Dashboard() {
 
      {/* end navbar */}
 
-     <div className="bg-white w-full h-full">
+     <div className="bg-white flex-1 ">
        <Switch>
        <Route exact path="/">
        <Home location={{setLocation:setLocation,location:location}}/>

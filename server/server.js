@@ -1,8 +1,7 @@
 const express = require('express');  
 const app = express();
 require('dotenv').config() 
-const redis = require('redis');
-const redisClient = redis.createClient(); 
+
 const cors = require('cors')
 const helmet = require('helmet')
 const morgan = require('morgan')
@@ -101,10 +100,6 @@ var server = app.listen(PORT,()=>{
   console.log('express server runing')
 });
 
-//redis server listening
-redisClient.on('connect', function() {
-  console.log('redis server Connected!');
-});
 
 
 var io = require('socket.io')(server, {
