@@ -25,12 +25,20 @@ module.exports = {
         '4': '4px',
        '6': '6px',
        '8': '8px',
-      }
+      },
+      maxWidth: {
+        '1/4': '25%',
+        '4/12':"33%",
+        '1/2': '50%',
+        '3/4': '75%',
+              }
     },
   
   },
   variants: {
-    extend: {},
+    extend: {
+      display: ["group-hover"],
+    },
   },
   plugins: [],
 }

@@ -22,7 +22,7 @@ export default function Login() {
             return
         }else{
             setError("")
-            let result = await login(email,password)
+            let result = await login(email.toLowerCase(),password)
             if(result === "Wrong password" ){
                 setError("Wrong password")
             }else if(result === "User does not exist"){

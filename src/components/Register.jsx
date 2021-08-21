@@ -28,7 +28,7 @@ export default function Register() {
         
         }else{
             setError("")
-            let result = await register(username,email,password)
+            let result = await register(username.toLowerCase(),email.toLowerCase(),password)
             if(result === "Wrong password" ){
                 setError("Wrong password")
             }else if(result === "User does not exist"){
@@ -39,6 +39,7 @@ export default function Register() {
                 console.log(result)
             }else{
                 console.log("Fatal Error")
+                setError("Internal server Error")
             }
            
         }

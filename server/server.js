@@ -8,8 +8,11 @@ const helmet = require('helmet')
 const morgan = require('morgan')
 const mongoose = require('mongoose');
 
-const userRoute = require('./routes/users')
-const authRoute = require('./routes/auth')
+const AgentRoute = require('./routes/Agents')
+const AuthRoute = require('./routes/Auth')
+const CustomerRoute = require('./routes/Customers')
+const ConversationRoute = require('./routes/Conversations')
+const MessagesRoute = require('./routes/Messages')
 
 const dialogflow = require('@google-cloud/dialogflow');
 const uuid  = require("uuid")
@@ -77,11 +80,15 @@ app.use(helmet())
 app.use(morgan("common")) 
 
 app.get("/",(req,res)=>{
-res.json({spark:"hi"})
+res.json({sparky:"hi"})
 })
 
-app.use("/api/user",userRoute)
-app.use("/api/auth",authRoute)
+app.use("/api/agents",AgentRoute)
+app.use("/api/auth",AuthRoute)
+app.use('/api/customers',CustomerRoute)
+app.use('/api/conversations',ConversationRoute)
+app.use('/api/messages',MessagesRoute)
+
 
 
 const uri = process.env.ATLAS_URI;
@@ -165,10 +172,4 @@ io.on('connection',client=>{
 
 
 
-
-
-
-
-
-
-
+AuthRoute

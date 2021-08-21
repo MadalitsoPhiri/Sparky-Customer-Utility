@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const UserModel = require('../models/user.model')
+const AgentModel = require('../models/Agent') 
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 
@@ -15,12 +15,12 @@ router.post("/register", async(req,res)=>{
         const hashedPassword = await bcrypt.hash(req.body.password,salt)
         req.body['password'] = hashedPassword
         
-        //create new user
-        const user = await new UserModel(req.body)
+        //create new agent
+        const agent = await new AgentModel(req.body)
 
         //save to mongodb
-        await user.save()
-        res.status(200).json(user)
+        await agent.save()
+        res.status(200).json(agent)
     }catch(err){
         if (err) {
             if (err.name === 'MongoError' && err.code === 11000) {
@@ -43,14 +43,14 @@ router.post('/login',async(req,res)=>{
 
     try{
         console.log(req.body)
-        const user = await UserModel.findOne({email:req.body.email})
+        const agent = await AgentModel.findOne({email:req.body.email})
        
-        if(user){
-            const validPassword = await bcrypt.compare(req.body.password, user.password)
+        if(agent){
+            const validPassword = await bcrypt.compare(req.body.password, agent.password)
             if(validPassword){
                 console.log(process.env.TOKEN_SECRET)
-                const token = jwt.sign({email:user.email,user:user.password},process.env.TOKEN_SECRET,{expiresIn:"30m"})
-                res.status(200).json({message:"login successful",payload:{email:user.email,token:token}})
+                const token = jwt.sign({email:agent.email,agent:agent.password},process.env.TOKEN_SECRET,{expiresIn:"30m"})
+                res.status(200).json({message:"login successful",payload:{email:agent.email,token:token,username:agent.username,agentId:agent._id}})
             }else{
                 res.status(400).json({message:"wrong password"})
             } 
@@ -58,7 +58,7 @@ router.post('/login',async(req,res)=>{
         }
  
         else{
-            res.status(404).json({message:"user not found"})
+            res.status(404).json({message:"agent not found"})
         }
     }catch(err){
         console.log(err)
@@ -69,7 +69,7 @@ router.post('/login',async(req,res)=>{
 }) 
 
 router.get("/",(req,res)=>{
-res.json({user:"unauthorized"})
+res.json({agent:"unauthorized"})
 })
 
 module.exports = router
