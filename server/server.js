@@ -1,5 +1,4 @@
-const express = require('express');  
-const app = express();
+const express = require('express')
 require('dotenv').config() 
 
 const cors = require('cors')
@@ -7,18 +6,24 @@ const helmet = require('helmet')
 const morgan = require('morgan')
 const mongoose = require('mongoose');
 
+
+const MessagesModel = require('./models/Message')
+const ConversationModel= require('./models/Conversation')
+const dialogflow = require('@google-cloud/dialogflow');
+const uuid  = require("uuid");
+const { subscribe } = require('./routes/Auth');
+const projectId = "appointmentscheduler-njdh"
+const agentName = "AppointmentScheduler"
+const agentsRoom = "AgentsInfo"
+var app = express();  
+var server = require('http').createServer(app); 
+const io = require('./socket.js').init(server);
+const MessagesRoute = require('./routes/Messages')
 const AgentRoute = require('./routes/Agents')
 const AuthRoute = require('./routes/Auth')
 const CustomerRoute = require('./routes/Customers')
 const ConversationRoute = require('./routes/Conversations')
-const MessagesRoute = require('./routes/Messages')
-
-const dialogflow = require('@google-cloud/dialogflow');
-const uuid  = require("uuid")
-const projectId = "appointmentscheduler-njdh"
-const agentName = "AppointmentScheduler"
-const agentsRoom = "AgentsInfo"
-let onlineAgents = []
+let onlineAgents = require('./agents').onlineAgents;
 
 
 const message = "friday"
@@ -91,23 +96,18 @@ app.use('/api/messages',MessagesRoute)
 
 
 const uri = process.env.ATLAS_URI;
-mongoose.connect(uri,{useNewUrlParser:true, useCreateIndex:true,  useUnifiedTopology: true});
+mongoose.connect(uri,{useNewUrlParser:true, useCreateIndex:true,  useUnifiedTopology: true,useFindAndModify:false});
 const connection = mongoose.connection
 connection.once('open',()=>{
   console.log("MongoDb connected!")
 })
-var server = app.listen(PORT,()=>{
+ server.listen(PORT,()=>{
   console.log('express server runing')
 });
 
 
 
-var io = require('socket.io')(server, {
-  cors: {
-    origin: '*',//change this in production
-  }
-});
-
+ 
 
 //an event for all socket connections from clients
 io.on('connection',client=>{
@@ -154,11 +154,24 @@ io.on('connection',client=>{
   })
 
 
-  client.on('agentLoggedIn',(user)=>{
+  client.on('agentLoggedIn',async(user)=>{
+    await conSubscribe(client,user)
     client.join(agentsRoom)
-    !onlineAgents.some((agent)=> agent.email === user.email) && onlineAgents.push({email:user.email,socketId:client.id,busy:false})
+    !onlineAgents.some((agent)=> agent.email === user.email) && onlineAgents.push({email:user.email,socketId:client.id,busy:false,agentId:user.agentId})
     io.to(agentsRoom).emit("agent-info",onlineAgents)
+    console.log(user.agentId)
+  
+})
 
+client.on('getConMessages',async(id)=>{
+  result = await getMessages(id)
+  client.emit('conMessages',result)
+})
+
+client.on('newMessage',(payload)=>{
+ const {conversation,message,agentId} = payload;
+ console.log("Said the sky",conversation._id)
+ sendNewMessage(conversation,message,agentId)
 })
 
 
@@ -167,4 +180,45 @@ io.on('connection',client=>{
 
 
 
-AuthRoute
+async function getMessages(id){
+  try{
+     const messages = await MessagesModel.find({
+        conversationId:id,
+     });
+     console.log(messages)
+     return {message:"succsesfully got messages",messages}
+  }catch(err){
+    console.log(err)
+ return {mesage:"internal server error"}
+
+  }
+}
+
+async function conSubscribe(socket,user){
+  try{
+    const conversations = await ConversationModel.find({members:{$in:[user.agentId]}})
+    console.log(conversations)
+    conversations.map((item,index)=>{
+    socket.join(`${item._id}`)
+
+    console.log("coversationId",item._id)
+    })
+
+}catch(err){
+
+ console.log(err)
+}
+}
+const sendNewMessage = async(conversation,msg,agentId)=>{
+  const message = new MessagesModel({conversationId:conversation._id,senderId:agentId,text:msg})
+  try{
+    await ConversationModel.findByIdAndUpdate(conversation._id,{lastMessage:msg})
+    const savedMessage = await message.save()
+    io.to(`${conversation._id}`).emit('onNewMessage',message);
+  
+    
+ }catch(err){
+    
+    console.log(err)
+ }
+}

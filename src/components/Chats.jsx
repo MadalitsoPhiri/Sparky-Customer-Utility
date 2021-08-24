@@ -2,17 +2,19 @@ import React,{useContext,useEffect,useState}from 'react'
 import {ReactComponent as NoChatLogo} from '../assets/undraw_No_chats.svg';
 import { AuthContext } from './contexts/AuthContext';
 import Conversation from './Conversation';
+import Feed from './Feed';
+import FeedLoading from './FeedLoading';
+import NoConversation from './NoConversation';
+import SelectChat from './SelectChat';
 
 export default function Chats() {
     const {user,connected,socket,agentInfo} = useContext(AuthContext);
     const [conversations,setConversations] = useState([])
-    const [message,setMessage] = useState("")
-
+  
+    const skeleton = [1,2,3,4,5,6,7,8,9]
     const [feed,setFeed] = useState(null)
     const [loading,setLoading] = useState(true)
-    const handleMessageChange = (e)=>{
-       setMessage(e.target.value)
-    }
+  
     const handleOnChatSelected = (item)=>{
           setFeed(item)
     }
@@ -27,12 +29,17 @@ export default function Chats() {
        }catch(err){
         console.log(err)   
        }
+
+       socket.on('onNewConversation',(conversation)=>{
+          console.log("newConversation",conversation)
+          setConversations(old =>[...old,conversation])
+       })
     }, []) 
     return (
         <div className="h-full flex flex-row bg-white">
 
            {/* convsersation panel */}
-            <div className="border-r border-gray-300 h-full  max-w-1/4 ">
+            <div className="border-r border-gray-300 h-full  w-1/3">
                     <div className=" flex flex-row justify-between w-full p-4 border-b border-gray-300">
                             <div className="flex flex-row items-center gap-3">
                             <div className="relative">
@@ -47,51 +54,24 @@ export default function Chats() {
                                             <p className="text-lg font-medium text-gray-500">Chats</p>
                     </div>
 
-                    <div className="flex flex-col overflow-y-auto">
-                { conversations.length === 0 ? <> <div class=" flex flex-row gap-4 p-4">
-                                <div className="rounded-full bg-gray-300 h-14 w-14  ml-2"></div>
-                                <div className="flex flex-col flex-1 gap-4 mr-10">
-                                <div className="rounded-full bg-gray-300 h-5 w-3/4"></div>
-                                <div className="rounded-full bg-gray-300 h-5 w-full"></div>
-                                </div>
-                                
-                            </div>
-
-                            <div class=" flex flex-row gap-4 p-4">
-                                <div className="rounded-full bg-gray-300 h-14 w-14  ml-2"></div>
-                                <div className="flex flex-col flex-1 gap-4 mr-10">
-                                <div className="rounded-full bg-gray-300 h-5 w-3/4"></div>
-                                <div className="rounded-full bg-gray-300 h-5 w-full"></div>
-                                </div>
-                                
-                            </div>
-                            <div class=" flex flex-row gap-4 p-4">
-                                <div className="rounded-full bg-gray-300 h-14 w-14  ml-2"></div>
-                                <div className="flex flex-col flex-1 gap-4 mr-10">
-                                <div className="rounded-full bg-gray-300 h-5 w-3/4"></div>
-                                <div className="rounded-full bg-gray-300 h-5 w-full"></div>
-                                </div>
-                                
-                            </div>
-
-                            <div class=" flex flex-row gap-4 p-4">
-                                <div className="rounded-full bg-gray-300 h-14 w-14  ml-2"></div>
-                                <div className="flex flex-col flex-1 gap-4 mr-10">
-                                <div className="rounded-full bg-gray-300 h-5 w-3/4"></div>
-                                <div className="rounded-full bg-gray-300 h-5 w-full"></div>
-                                </div>
-                                
-                            </div>
-
-                            <div class=" flex flex-row gap-4 p-4">
-                                <div className="rounded-full bg-gray-300 h-14 w-14  ml-2"></div>
-                                <div className="flex flex-col flex-1 gap-4 mr-10">
-                                <div className="rounded-full bg-gray-300 h-5 w-3/4"></div>
-                                <div className="rounded-full bg-gray-300 h-5 w-full"></div>
-                                </div>
-                                
-                            </div></>:conversations.map((item,index)=>{
-                            return  <Conversation conversation={item} />
+                    <div className="flex flex-col overflow-y-auto w-full">
+                { conversations.length === 0 ? <>
+                {skeleton.map(()=>{
+           
+           return <div class=" flex flex-row gap-4 p-4">
+                <div className="rounded-full bg-gray-300 h-14 w-14  ml-2"></div>
+                <div className="flex flex-col flex-1 gap-4 ">
+                <div className="rounded-full bg-gray-300 h-5 w-3/4"></div>
+                <div className="rounded-full bg-gray-300 h-5 w-full"></div>
+                </div>
+           
+            </div>
+                
+                })}
+                </>:conversations.map((item,index)=>{
+                            return <div onClick={(e)=>{
+                                setFeed(item)
+                            }}> <Conversation conversation={item} key={index}/></div>
                     
                         })}
                             
@@ -102,27 +82,8 @@ export default function Chats() {
 
 
          {/* conversation feed */}
-         <div className="border-r border-gray-300 h-full flex-1 flex flex-col flex-shrink">
-                <div className="flex flex-row justify-between border-b border-gray-300 p-4 ">
-                   <div className="gap-3 items-center flex flex-row">
-                       <div className="bg-gray-300 rounded-full w-8 h-8"></div>
-                       <div className="bg-gray-300 rounded-full w-32 h-4"></div>
-
-                   </div>
-                   <p className="text-lg font-medium text-gray-500 ">Chat feed</p>
-               </div>
-               {/* feed body */}
-               <div className=" flex-1 w-full overflow-y-auto p-4 flex flex-col gap-5"> 
-             {/* <p className="bg-yellow-500 p-4  rounded-xl  break-words text-white self-end max-w-xs">Hello there can i help you gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg</p>
-               <p className="bg-gray-200 p-4  rounded-xl  break-words text-black self-start ">Hello there can i help you </p>  */}
-               </div>
-               {/* <div className="border-t border-gray-300  w-full p-2 flex flex-row gap-5 justify-center items-center"> 
-               <input name="password" placeholder="Type message here...." value={message} onChange={handleMessageChange} className="flex-1 text-lg outline-none border rounded-full p-2 "/>
-               <button className="rounded-full bg-yellow-500 w-10 h-10 flex flex-row justify-center items-center"><svg className="w-5 h-5 text-white transform rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg></button>
-               </div> */}
-               
-               
-         </div>
+         {loading? <FeedLoading/>:conversations.length ===  0 ?<NoConversation/> :feed != null ?<Feed conversation={feed}/>:<SelectChat/>}
+          
          
 
         </div>

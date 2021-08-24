@@ -1,0 +1,2 @@
+exports.onlineAgents =  [];
+exports.onlineCustomer = [];

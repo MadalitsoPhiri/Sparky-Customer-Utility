@@ -25,6 +25,7 @@ function Dashboard() {
  
   socket.emit('agentLoggedIn',user)
  
+ 
    
 
 
@@ -36,7 +37,7 @@ function Dashboard() {
 
   return (
     <Router>
-    <div className="flex flex-row w-screen h-screen overflow-x-hidden">
+    <div className="flex flex-row w-screen h-screen overflow-x-auto">
       {/* navbar */}
      <div className="flex flex-col h-full py-2 bg-black-nav justify-between">
       
