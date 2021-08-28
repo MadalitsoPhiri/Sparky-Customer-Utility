@@ -18,15 +18,20 @@ res.status(500).json({message:"internal server error"})
 
 //create new customer
 router.post('/create',async(req,res)=>{
+    let customerDetails = req.body.customerDetails
      try{
-         const customer = new CustomerModel(req.body.customerDetails)
-         await customer.save()
-         res.status(200).json({message:"succsessfully created new customer",customer})
+         const customer = await CustomerModel.findOneAndUpdate({email:{$eq:customerDetails.email}},customerDetails,{
+            new: true,
+            upsert: true // Make this update into an upsert
+          })
+       
+         res.status(200).json({message:"succsessfully logged new customer in",customer})
      }catch(err){
+         console.log(err)
          if(err.code == 11000){
             res.status(409).json({message:"user Already exists"})
          }else{
-            res.status(500).json({message:"internal servr error"})
+            res.status(500).json({message:"internal server error"})
          }
        
      }

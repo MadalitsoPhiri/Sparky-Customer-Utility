@@ -7,7 +7,7 @@ import FeedLoading from './FeedLoading';
 import NoConversation from './NoConversation';
 import SelectChat from './SelectChat';
 
-export default function Chats() {
+export default function Chats({history}) {
     const {user,connected,socket,agentInfo} = useContext(AuthContext);
     const [conversations,setConversations] = useState([])
   
@@ -82,7 +82,7 @@ export default function Chats() {
 
 
          {/* conversation feed */}
-         {loading? <FeedLoading/>:conversations.length ===  0 ?<NoConversation/> :feed != null ?<Feed conversation={feed}/>:<SelectChat/>}
+         {loading? <FeedLoading/>:conversations.length ===  0 ?<NoConversation history={history}/> :feed != null ?<Feed conversation={feed}/>:<SelectChat/>}
           
          
 

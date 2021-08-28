@@ -2,7 +2,9 @@ const router = require('express').Router();
 const ConversationModel = require('../models/Conversation');
 const MessagesModel = require('../models/Message')
 const io = require('../socket').getio();
-let onlineAgents = require('../agents').onlineAgents;
+let {getOnlineAgents,getQueuedCustomers} = require('../agents')
+
+
 
 //create conversation
 router.post('/',async(req,res)=>{
@@ -12,10 +14,13 @@ router.post('/',async(req,res)=>{
     })
     try{
        const savedConversation = await conversation.save()
-        await notifyAgents(onlineAgents,savedConversation)
-    
+        await notifyAgents(savedConversation)
+        await notifyClient(savedConversation)
     io.to(`${savedConversation._id}`).emit('onNewConversation',savedConversation);
-    console.log("online:",onlineAgents)
+    console.log("onlineAgents:",getOnlineAgents())
+    console.log("QueuedCustomers:",getQueuedCustomers())
+
+
        res.status(200).json({message:"new Conversation created",conversation:savedConversation})
     }catch(err){
        res.status(500).json({message:"internal server error"})
@@ -47,16 +52,36 @@ router.get('/:userId',async(req,res)=>{
 }
 })
 
-const notifyAgents = async(onlineAgents,conversation)=>{
-  const agent = onlineAgents.find(a=>conversation.members.includes(a.agentId))
+const notifyAgents = async(conversation)=>{
+  const agent = getOnlineAgents().find(a=>conversation.members.includes(a.agentId))
   if(agent){
     const sockets = await io.in(agent.socketId).fetchSockets();
+    console.log("is agent")
+
     for (const socket of sockets) {
      
         socket.join(`${conversation._id}`);
+        console.log("agent joining conversation: ",agent.socketId)
      
       }
+     
   }
 }
+
+
+const notifyClient = async(conversation)=>{
+   
+    const customer = getQueuedCustomers().find(a=>conversation.members.includes(a.user._id))
+    
+    if(customer){
+        console.log("is client")
+      const sockets = await io.in(customer.socketId).fetchSockets();
+      for (const socket of sockets) {
+       
+          socket.join(`${conversation._id}`);
+          console.log("client joining conversation: ",customer.user.socketId)
+        }
+    }
+  }
 
 module.exports = router

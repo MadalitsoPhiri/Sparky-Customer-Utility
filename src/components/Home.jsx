@@ -51,7 +51,7 @@ export default function Home({location,setLocation}) {
             setLocation('/chats')
             }}>
                   <p className="font-bold text-black-nav">Customers online</p>
-                  <p className="font-bold text-black-nav text-4xl">{clients}</p>
+                  <p className="font-bold text-black-nav text-4xl">{agentInfo && agentInfo.browsingCustomers.length}</p>
                   </NavLink>
                   <NavLink to="/chats" className="flex flex-1 flex-col bg-white hover:bg-gray-100  p-8"  onClick={()=>{
             setLocation('/chats')
@@ -64,7 +64,7 @@ export default function Home({location,setLocation}) {
             setLocation('/agents')
             }}>
                   <p className="font-bold text-black-nav">Logged in agents</p>
-                  <p className="font-bold text-black-nav text-4xl">{agentInfo.length}</p>
+                  <p className="font-bold text-black-nav text-4xl">{agentInfo && agentInfo.onlineAgents.length}</p>
                   </NavLink>
                   </div>
                   <p className="p-4"><span className="font-medium">Tip:</span> Forward your email to Sparknspur so you can manage all your conversations in one place.</p>

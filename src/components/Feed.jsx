@@ -14,7 +14,8 @@ export default function Feed({conversation}) {
      }
     const handleMessageSend = (e)=>{
           if(message != ""){
-           socket.emit('newMessage',{conversation,message,agentId:user.agentId},()=>{})
+              
+           socket.emit('newMessage',{conversationId:conversation._id,text:message,senderId:user.agentId},()=>{})
           }
     } 
     useEffect(async() => {
