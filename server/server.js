@@ -16,8 +16,8 @@ const projectId = "appointmentscheduler-njdh"
 const agentName = "AppointmentScheduler"
 const agentsRoom = "AgentsInfo"
 var app = express();  
-var server = require('https').createServer({key: fs.readFileSync('/etc/letsencrypt/live/domain.name/privkey.pem'),
-     cert: fs.readFileSync('/etc/letsencrypt/live/domain.name/cert.pem'),ca: fs.readFileSync('/etc/letsencrypt/live/domain.name/chain.pem'),
+var server = require('https').createServer({key: fs.readFileSync('/etc/letsencrypt/live/sparkychatbot.ddns.net/privkey.pem'),
+     cert: fs.readFileSync('/etc/letsencrypt/live/sparkychatbot.ddns.net/cert.pem'),ca: fs.readFileSync('/etc/letsencrypt/live/sparkychatbot.ddns.net/chain.pem'),
      requestCert: false,rejectUnauthorized: false },
      app); 
 const io = require('./socket.js').init(server);
