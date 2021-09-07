@@ -16,7 +16,12 @@ const projectId = "appointmentscheduler-njdh"
 const agentName = "AppointmentScheduler"
 const agentsRoom = "AgentsInfo"
 var app = express();  
-var server = require('http').createServer(app); 
+var server = require('http').createServer(app,{
+  cors: {
+    origin: "https://sparkychatbot.ddns.net",
+    methods: ["GET", "POST"]
+  }
+}); 
 const io = require('./socket.js').init(server);
 const MessagesRoute = require('./routes/Messages')
 const AgentRoute = require('./routes/Agents')
