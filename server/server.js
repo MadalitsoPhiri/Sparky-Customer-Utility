@@ -5,7 +5,7 @@ const cors = require('cors')
 const helmet = require('helmet')
 const morgan = require('morgan')
 const mongoose = require('mongoose');
-
+const fs = require('fs')
 
 const MessagesModel = require('./models/Message')
 const ConversationModel= require('./models/Conversation')
@@ -16,12 +16,10 @@ const projectId = "appointmentscheduler-njdh"
 const agentName = "AppointmentScheduler"
 const agentsRoom = "AgentsInfo"
 var app = express();  
-var server = require('http').createServer(app,{
-  cors: {
-    origin: "https://sparkychatbot.ddns.net",
-    methods: ["GET", "POST"]
-  }
-}); 
+var server = require('https').createServer({key: fs.readFileSync('/etc/letsencrypt/live/domain.name/privkey.pem'),
+     cert: fs.readFileSync('/etc/letsencrypt/live/domain.name/cert.pem'),ca: fs.readFileSync('/etc/letsencrypt/live/domain.name/chain.pem'),
+     requestCert: false,rejectUnauthorized: false },
+     app); 
 const io = require('./socket.js').init(server);
 const MessagesRoute = require('./routes/Messages')
 const AgentRoute = require('./routes/Agents')
