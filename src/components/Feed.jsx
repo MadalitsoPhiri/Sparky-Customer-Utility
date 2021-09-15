@@ -26,7 +26,7 @@ export default function Feed({conversation}) {
         console.log('customerId:',customerId[0])
 
         try{
-     const response = await fetch(`http://localhost:5000/api/customers/${customerId[0]}`) 
+     const response = await fetch(`https://www.getsparky.io/api/customers/${customerId[0]}`) 
      const json = await response.json()
      setCustomer(json.customer)
      console.log(json)

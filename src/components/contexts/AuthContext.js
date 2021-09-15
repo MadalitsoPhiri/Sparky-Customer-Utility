@@ -23,7 +23,7 @@ export const AuthProvider = ({ children }) => {
         agentInfo,
         setAgentInfo,
         login:async (email,password) => {
-          const response = await fetch('http://localhost:5000/api/auth/login',{method:"POST",headers: {
+          const response = await fetch('https://www.getsparky.io/api/auth/login',{method:"POST",headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
           },body:JSON.stringify({
@@ -56,7 +56,7 @@ export const AuthProvider = ({ children }) => {
 
         },
         register: async(username,email,password) => {
-          const response = await fetch('http://localhost:5000/api/auth/register',{method:"POST",headers: {
+          const response = await fetch('https://www.getsparky.io/api/auth/register',{method:"POST",headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
           },body:JSON.stringify({

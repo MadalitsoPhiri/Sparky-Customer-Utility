@@ -21,7 +21,7 @@ export default function Chats({history}) {
     useEffect(async() => {
        
        try{
-         const response = await fetch(`http://localhost:5000/api/conversations/${user.agentId}`)
+         const response = await fetch(`https://www.getsparky.io/api/conversations/${user.agentId}`)
          const json = await response.json()
          console.log(json)
          setConversations(json.conversations)
