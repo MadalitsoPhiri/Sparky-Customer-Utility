@@ -14,6 +14,12 @@ module.exports = {
           inactive:"#72767D",
           active:"#2F3136",
           border:"#babec2"
+        },
+        purple:{
+          base:"#602E9E",
+          light:"#7638c2"
+         
+          
         }
       },
 
@@ -50,5 +56,7 @@ module.exports = {
       display: ["group-hover"],
     },
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/forms'),
+  ],
 }

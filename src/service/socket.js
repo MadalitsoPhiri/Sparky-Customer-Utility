@@ -1,5 +1,6 @@
 import io from "socket.io-client";
-const SOCKET_URL = 'ws://localhost:5000';
-const SOCKET_URL1 = 'wss://www.getsparky.io/';
+import { BASE_URL } from "../Constants";
+const DEV = 'ws://localhost:5000';
+const PROD = 'wss://www.getsparky.io/';
 
-export const socket = io(SOCKET_URL1);
+export const socket = io(DEV);
